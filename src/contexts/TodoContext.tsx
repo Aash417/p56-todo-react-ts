@@ -1,17 +1,17 @@
 import { FC, createContext, useContext, useEffect, useState } from 'react';
 
-interface Todo {
+export interface Todo {
 	id: number;
 	todo: string;
 	completed: boolean;
 }
 interface TodoContextValue {
-	todos?: Todo[];
-	addTodo?: (todo: Todo) => void;
-	updateTodo?: (id: number, updatedTodo: Todo) => void;
-	deleteTodo?: (id: number) => void;
-	toggleComplete?: (id: number) => void;
-	setTodos?: React.Dispatch<React.SetStateAction<Todo[]>>;
+	todos: Todo[];
+	addTodo: (todo: Todo) => void;
+	updateTodo: (id: number, updatedTodo: Todo) => void;
+	deleteTodo: (id: number) => void;
+	toggleComplete: (id: number) => void;
+	setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 export const TodoContext = createContext<TodoContextValue>({});
 
@@ -31,9 +31,8 @@ export const TodoProvider: FC<MyContextProviderProps> = ({ children }) => {
 		const getL = localStorage.getItem('todos');
 		if (getL) {
 			localData = JSON.parse(getL);
-			return;
+			if (localData && localData.length > 0) setTodos(todos);
 		}
-		if (localData && localData.length > 0) setTodos(todos);
 	}, [setTodos]);
 
 	useEffect(() => {
@@ -41,7 +40,7 @@ export const TodoProvider: FC<MyContextProviderProps> = ({ children }) => {
 	}, [todos]);
 
 	function addTodo(todo: Todo): void {
-		setTodos((pvev) => [...pvev, { ...todo }]);
+		setTodos((pvev) => [...pvev, { ...todo, id: Date.now() }]);
 	}
 	function updateTodo(id: number, todo: Todo): void {
 		setTodos((prev) =>
