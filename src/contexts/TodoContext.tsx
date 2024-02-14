@@ -1,48 +1,58 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, createContext, useContext, useEffect, useState } from 'react';
 
-export interface Todo {
+export interface TodoType {
 	id: number;
 	todo: string;
 	completed: boolean;
 }
 interface TodoContextValue {
-	todos: Todo[];
-	addTodo: (todo: Todo) => void;
-	updateTodo: (id: number, updatedTodo: Todo) => void;
+	todos: TodoType[];
+	addTodo: (todo: TodoType) => void;
+	updateTodo: (id: number, updatedTodo: TodoType) => void;
 	deleteTodo: (id: number) => void;
 	toggleComplete: (id: number) => void;
-	setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+	setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
 }
-export const TodoContext = createContext<TodoContextValue>({});
+// initial values for the context
+const initialTodoContextValue: TodoContextValue = {
+	todos: [],
+	addTodo: (_todo) => {},
+	updateTodo: (_id, _updatedTodo) => {},
+	deleteTodo: (_id) => {},
+	toggleComplete: (_id) => {},
+	setTodos: () => {},
+};
+
+export const TodoContext = createContext<TodoContextValue>(
+	initialTodoContextValue
+);
 
 interface MyContextProviderProps {
 	children: React.ReactNode;
 }
 export const TodoProvider: FC<MyContextProviderProps> = ({ children }) => {
-	const [todos, setTodos] = useState<Array<Todo>>([
+	const [todos, setTodos] = useState<Array<TodoType>>([
 		{
 			id: 1,
 			todo: 'Todo msg',
 			completed: false,
 		},
 	]);
+
 	useEffect(() => {
-		let localData: string;
-		const getL = localStorage.getItem('todos');
-		if (getL) {
-			localData = JSON.parse(getL);
-			if (localData && localData.length > 0) setTodos(todos);
-		}
-	}, [setTodos]);
+		const todos = JSON.parse(localStorage.getItem('todos'));
+		if (todos && todos.length > 0) setTodos(todos);
+	}, []);
 
 	useEffect(() => {
 		localStorage.setItem('todos', JSON.stringify(todos));
 	}, [todos]);
 
-	function addTodo(todo: Todo): void {
-		setTodos((pvev) => [...pvev, { ...todo, id: Date.now() }]);
+	function addTodo(todo: TodoType): void {
+		setTodos((pvev) => [...pvev, { ...todo }]);
 	}
-	function updateTodo(id: number, todo: Todo): void {
+	function updateTodo(id: number, todo: TodoType): void {
 		setTodos((prev) =>
 			prev.map((prevTodo) => (prevTodo.id === id ? todo : prevTodo))
 		);
@@ -76,10 +86,10 @@ export const TodoProvider: FC<MyContextProviderProps> = ({ children }) => {
 	);
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTodo() {
 	const context = useContext(TodoContext);
-	if (!context )
-		throw new Error('context used outside todoContext');
+	if (!context) throw new Error('context used outside todoContext');
 
 	return context;
 }

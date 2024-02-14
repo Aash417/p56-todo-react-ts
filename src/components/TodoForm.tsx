@@ -5,13 +5,14 @@ function TodoForm() {
 	const [newTodo, setNewTodo] = useState<string>('');
 	const { addTodo } = useTodo();
 
-	function add(e: MouseEvent | FormEvent<HTMLButtonElement>) {
+	const add = (e) => {
 		e.preventDefault();
+		console.log(newTodo);
 		addTodo({ id: Date.now(), todo: newTodo, completed: false });
-	}
+	};
 
 	return (
-		<form className='flex'>
+		<form className='flex' onSubmit={add}>
 			<input
 				type='text'
 				placeholder='Write Todo...'
@@ -21,7 +22,6 @@ function TodoForm() {
 			/>
 			<button
 				type='submit'
-				onSubmit={add}
 				className='rounded-r-lg px-3 py-1 bg-green-600 text-white shrink-0'
 			>
 				Add
