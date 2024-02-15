@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { useTodo } from '../contexts/TodoContext';
 
 function TodoForm() {
@@ -7,8 +7,8 @@ function TodoForm() {
 
 	const add = (e) => {
 		e.preventDefault();
-		console.log(newTodo);
 		addTodo({ id: Date.now(), todo: newTodo, completed: false });
+		setNewTodo('');
 	};
 
 	return (

@@ -32,13 +32,7 @@ interface MyContextProviderProps {
 	children: React.ReactNode;
 }
 export const TodoProvider: FC<MyContextProviderProps> = ({ children }) => {
-	const [todos, setTodos] = useState<Array<TodoType>>([
-		{
-			id: 1,
-			todo: 'Todo msg',
-			completed: false,
-		},
-	]);
+	const [todos, setTodos] = useState<Array<TodoType>>([]);
 
 	useEffect(() => {
 		const todos = JSON.parse(localStorage.getItem('todos'));
